@@ -20,10 +20,14 @@ postsRouter.post("/", async (req, res, next) => {
 postsRouter.get("/", async (req, res, next) => {
   try {
     const posts = await postsModel.findAll({
-      attributes: { exclude: ["createdAt", "updatedAt"] },
+      attributes: { exclude: ["createdAt", "updatedAt", "userId"] },
       include: [
         { model: usersModel, attributes: ["userId", "name"] },
-        { model: commentsModel, attributes: ["comment"] },
+        {
+          model: commentsModel,
+          attributes: ["comment"],
+          include: { model: usersModel, attributes: ["name"] },
+        },
       ],
     });
     res.send(posts);
